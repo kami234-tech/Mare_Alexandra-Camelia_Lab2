@@ -11,7 +11,7 @@ using WebApplication2.Moddels;
 
 namespace WebApplication2.Pages.Books
 {
-    public class EditModel : PageModel
+    public class EditModel : BookCategoriesPageModel
     {
         private readonly WebApplication2.Data.WebApplication2Context _context;
 
@@ -21,7 +21,7 @@ namespace WebApplication2.Pages.Books
         }
 
         [BindProperty]
-        public Book Book { get; set; } = default!;
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,55 +29,56 @@ namespace WebApplication2.Pages.Books
             {
                 return NotFound();
             }
+            Book = await _context.Book.Include(b => b.Publisher).
+                Include(b => b.BookCategories).ThenInclude(b => b.Category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
 
-            var book =  await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            if (Book == null)
             {
                 return NotFound();
             }
-            Book = book;
-            ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID",
-"PublisherName");
-            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID",
-"FirstName");
-            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID",
-"LastName");
+            PopulateAssignedCategoryData(_context, Book);
+            var authorList = _context.Author.Select(x => new {
+                x.ID,
+                FullName = x.LastName + " " + x.FirstName
+            });
+        ViewData["AuthorID"] = new SelectList(authorList, "ID", "FullName");
+        ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName");
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, string[] selectedCategories)
         {
-            if (!ModelState.IsValid)
+        if (id == null)
+        {
+            return NotFound();
+        }
+        var bookToUpdate = await _context.Book
+         .Include(i => i.Publisher)
+         .Include(i => i.Author)
+         .Include(i => i.BookCategories)
+         .ThenInclude(i => i.Category)
+         .Include(i=> i.Author)
+         .FirstOrDefaultAsync(s => s.ID == id);
+            if (bookToUpdate == null)
             {
-                return Page();
+                return NotFound();
             }
-
-            _context.Attach(Book).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookExists(Book.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            if (await TryUpdateModelAsync<Book>(
+                bookToUpdate,
+                "Book",
+                i => i.Title, i => i.Author,
+                i => i.Price, i => i.PublishingDate, i => i.PublisherID)) { 
+                UpdateBookCategories(_context, selectedCategories, bookToUpdate);
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
-
-        private bool BookExists(int id)
-        {
-            return _context.Book.Any(e => e.ID == id);
-        }
+        UpdateBookCategories(_context, selectedCategories, bookToUpdate);
+        PopulateAssignedCategoryData(_context, bookToUpdate);
+ return Page();
     }
+}
 }

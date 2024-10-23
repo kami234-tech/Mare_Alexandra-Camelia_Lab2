@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Moddels;
 
-namespace WebApplication2.Pages.Books
+namespace WebApplication2.Pages.Categories
 {
     public class IndexModel : PageModel
     {
@@ -19,11 +19,11 @@ namespace WebApplication2.Pages.Books
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<Category> Category { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Book = await _context.Book.Include(b => b.Publisher).Include(b => b.BookCategories).ThenInclude(bc => bc.Category).Include(b => b.Author).AsNoTracking().ToListAsync();
+            Category = await _context.Category.ToListAsync();
         }
     }
 }
