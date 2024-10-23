@@ -16,5 +16,6 @@ namespace WebApplication2.Data
 
         public DbSet<WebApplication2.Moddels.Book> Book { get; set; } = default!;
         public DbSet<WebApplication2.Moddels.Publisher> Publisher { get; set; } = default!;
+        public DbSet<WebApplication2.Moddels.Author> Author { get; set; } = default!;
     }
 }
