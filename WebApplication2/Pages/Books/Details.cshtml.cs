@@ -20,15 +20,17 @@ namespace WebApplication2.Pages.Books
         }
 
         public Book Book { get; set; } = default!;
+        public IEnumerable<BookCategory> BookCategories { get; set; } = Enumerable.Empty<BookCategory>();
+
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var book = await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
+           
+            var book = await _context.Book
+                .Include(b => b.Author)
+                .Include(i => i.BookCategories)
+                .ThenInclude(bc=>bc.Category)
+               .FirstOrDefaultAsync(m => m.ID == id);
             if (book == null)
             {
                 return NotFound();
@@ -36,6 +38,7 @@ namespace WebApplication2.Pages.Books
             else
             {
                 Book = book;
+                BookCategories = book.BookCategories;
             }
             return Page();
         }

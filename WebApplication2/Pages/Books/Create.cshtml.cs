@@ -21,11 +21,17 @@ namespace WebApplication2.Pages.Books
 
         public IActionResult OnGet()
         {
+            var authorList = _context.Author.Select(x => new
+            {
+                x.ID,
+                FullName = x.LastName + " " + x.FirstName
+            });
+            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID",
+"FullName");
             ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID",
 "PublisherName");
-            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID",
-"FirstName");
-            var book =new Book();
+
+            var book = new Book();
             book.BookCategories = new List<BookCategory>();
             PopulateAssignedCategoryData(_context, book);
             return Page();
@@ -35,6 +41,10 @@ namespace WebApplication2.Pages.Books
         public Book Book { get; set; }
         public async Task<IActionResult> OnPostAsync(string[] selectedCategories)
         {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
             var newBook = new Book();
             if (selectedCategories != null)
             {
@@ -51,20 +61,6 @@ namespace WebApplication2.Pages.Books
             Book.BookCategories = newBook.BookCategories;
             _context.Book.Add(Book);
             await _context.SaveChangesAsync();
-            return RedirectToPage("./Index");
-        }
-
-        // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Book.Add(Book);
-            await _context.SaveChangesAsync();
-
             return RedirectToPage("./Index");
         }
     }
