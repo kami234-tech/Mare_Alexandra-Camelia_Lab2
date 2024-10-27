@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Moddels;
 
-namespace WebApplication2.Pages.Books
+namespace WebApplication2.Pages.Categories
 {
     public class DetailsModel : PageModel
     {
@@ -19,26 +19,23 @@ namespace WebApplication2.Pages.Books
             _context = context;
         }
 
-        public Book Book { get; set; } = default!;
-        public IEnumerable<BookCategory> BookCategories { get; set; } = Enumerable.Empty<BookCategory>();
-
+        public Category Category { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-           
-            var book = await _context.Book
-                .Include(b => b.Author)
-                .Include(i => i.BookCategories)
-                .ThenInclude(bc=>bc.Category)
-               .FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var category = await _context.Category.FirstOrDefaultAsync(m => m.ID == id);
+            if (category == null)
             {
                 return NotFound();
             }
             else
             {
-                Book = book;
-                BookCategories = book.BookCategories;
+                Category = category;
             }
             return Page();
         }
