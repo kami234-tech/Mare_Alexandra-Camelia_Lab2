@@ -17,15 +17,16 @@ namespace WebApplication2.Data
         public DbSet<WebApplication2.Moddels.Book> Book { get; set; } = default!;
         public DbSet<WebApplication2.Moddels.Publisher> Publisher { get; set; } = default!;
         public DbSet<WebApplication2.Moddels.Author> Author { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Book>()
-                .HasOne(b => b.Author)
-                .WithMany(a => a.Books)
-                .HasForeignKey(b => b.AuthorID)
-                .OnDelete(DeleteBehavior.Cascade);
-
             base.OnModelCreating(modelBuilder);
+
+            // Configurare relație Book-Borrowing
+            modelBuilder.Entity<Book>()
+                .HasMany(b => b.Borrowings)  // presupunând că Book are mai multe Borrowings
+                .WithOne(b => b.Book)         // presupunând că Borrowing are o proprietate Book
+                .HasForeignKey(b => b.BookID); // adaptează cheia conform structurii tale
         }
         public DbSet<WebApplication2.Moddels.Category> Category { get; set; } = default!;
         public DbSet<WebApplication2.Moddels.Member> Member { get; set; } = default!;

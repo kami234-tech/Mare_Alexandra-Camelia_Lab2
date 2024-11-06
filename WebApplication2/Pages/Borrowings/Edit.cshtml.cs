@@ -30,15 +30,22 @@ namespace WebApplication2.Pages.Borrowings
                 return NotFound();
             }
 
-            var borrowing =  await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
+            var borrowing = await _context.Borrowing
+                .Include(b => b.Book)
+        .Include(b => b.Member).FirstOrDefaultAsync(m => m.ID == id); 
             if (borrowing == null)
             {
                 return NotFound();
             }
             Borrowing = borrowing;
-           ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID");
-           ViewData["MemberID"] = new SelectList(_context.Member, "ID", "ID");
-            return Page();
+            ViewData["BookID"] = new SelectList(await _context.Book.Include(b => b.Author).Select(b => new { b.ID, BookDetails = b.Title + " by " + (b.Author != null ? b.Author.FullName : "Unknown Author") })
+                          .ToListAsync(),
+                          "ID", "BookDetails");
+            ViewData["MemberID"] = new SelectList(
+                await _context.Member.Select(m => new { m.ID, FullName = m.FirstName + " " + m.LastName }).ToListAsync(),
+                "ID",
+                "FullName");
+            return Page(); return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.

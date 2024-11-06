@@ -19,6 +19,7 @@ namespace WebApplication2.Moddels
 
         public int? AuthorID { get; set; }
         public Author? Author { get; set; }
+        public Borrowing? Borrowing { get; set; }
         public ICollection<Borrowing>? Borrowings { get; set; }
         public ICollection<BookCategory>? BookCategories { get; set; }
     }

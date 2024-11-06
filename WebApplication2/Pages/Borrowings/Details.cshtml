@@ -12,22 +12,25 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Borrowing.Member)
+            Member
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Borrowing.Member.ID)
+            @Model.Borrowing.Member?.FullName
+        <dt class="col-sm-2">
+            Book
+        </dt>
+        <dd class="col-sm-10">
+                @Model.Borrowing.Book?.Title
+                @if (Model.Borrowing.Book?.Author != null)
+                {
+                <span>by @Model.Borrowing.Book.Author.FullName</span>
+                }
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Borrowing.Book)
+            Return Date
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Borrowing.Book.ID)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Borrowing.ReturnDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Borrowing.ReturnDate)
+                @Model.Borrowing.ReturnDate.ToString("d")
         </dd>
     </dl>
 </div>
