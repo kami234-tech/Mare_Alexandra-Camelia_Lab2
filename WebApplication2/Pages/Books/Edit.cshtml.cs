@@ -21,7 +21,7 @@ namespace WebApplication2.Pages.Books
         }
 
         [BindProperty]
-        public Book Book { get; set; }
+        public Book Book { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -71,7 +71,7 @@ namespace WebApplication2.Pages.Books
                 bookToUpdate,
                 "Book",
                 i => i.Title, i => i.Author,
-                i => i.Price, i => i.PublishingDate, i => i.PublisherID)) { 
+                    i => i.Price, i => i.PublishingDate, i => i.PublisherID)) { 
                 UpdateBookCategories(_context, selectedCategories, bookToUpdate);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");

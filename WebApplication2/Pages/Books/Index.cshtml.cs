@@ -48,15 +48,15 @@ searchString)
 
                || s.Author.LastName.Contains(searchString)
                || s.Title.Contains(searchString));
-                if (id != null)
-                {
-                    BookID = id.Value;
-                    Book book = BookD.Books
-                    .Where(i => i.ID == id.Value).Single();
-                    BookD.Categories = book.BookCategories.Select(s => s.Category);
-                }
-                switch (sortOrder)
-                {
+             if (id != null)
+             {
+                BookID = id.Value;
+                Book book = BookD.Books
+                .Where(i => i.ID == id.Value).Single();
+                BookD.Categories = book.BookCategories.Select(s => s.Category);
+             }
+             switch (sortOrder)
+             {
                     case "title_desc":
                         BookD.Books = BookD.Books.OrderByDescending(s =>
                        s.Title);

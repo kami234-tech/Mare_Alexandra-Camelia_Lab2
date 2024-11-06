@@ -21,6 +21,7 @@ namespace WebApplication2.Pages.Authors
 
         public IList<Author> Author { get;set; } = default!;
 
+
         public async Task OnGetAsync()
         {
             Author = await _context.Author.ToListAsync();
