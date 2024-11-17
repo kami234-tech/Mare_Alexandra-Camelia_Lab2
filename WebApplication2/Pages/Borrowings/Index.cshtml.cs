@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,9 @@ namespace WebApplication2.Pages.Borrowings
         public IList<Borrowing> Borrowing { get;set; } = default!;
 
         public async Task OnGetAsync() => Borrowing = await _context.Borrowing
-        {
-            Borrowing = await _context.Borrowing
                 .Include(b => b.Book)
                 .ThenInclude(b => b.Author)
                 .Include(b => b.Member).ToListAsync();
-        }
+
     }
 }

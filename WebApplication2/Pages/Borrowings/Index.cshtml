@@ -20,8 +20,7 @@
                 @Html.DisplayNameFor(model => model.Borrowing[0].Book)
             </th>
             <th>
-                @Html.DisplayNameFor(model =>
-                         model.Borrowing[0].Book.Author)
+                @Html.DisplayNameFor(model =>model.Borrowing[0].Book.Author)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Borrowing[0].ReturnDate)
@@ -39,8 +38,7 @@
                 @Html.DisplayFor(modelItem => item.Book.Title)
             </td>
                 <td>
-                    @Html.DisplayFor(modelItem =>
-                             item.Book.Author.FullName)
+                    @Html.DisplayFor(modelItem =>item.Book.Author.FullName)
             <td>
                 @Html.DisplayFor(modelItem => item.ReturnDate)
             </td>
@@ -49,7 +47,7 @@
                 <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
                 <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
             </td>
-        </tr>
+            </tr>
 }
     </tbody>
 </table>
